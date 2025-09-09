@@ -1,0 +1,129 @@
+
+body {
+    background-color: #f8f9fa;
+    margin: 0;
+    padding-top: 56px;
+}
+
+.sidebar {
+    height: 100vh;
+    background-color: #343a40;
+    padding: 1rem 1.5rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    overflow-y: auto;
+    transition: all 0.3s ease-in-out;
+    z-index: 1040;
+    color: #adb5bd;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar.collapsed {
+    width: 60px;
+    padding-left: 0.5rem;
+}
+
+.sidebar.collapsed a {
+    text-align: center;
+    padding: 10px 5px;
+}
+
+.sidebar.collapsed a:hover {
+    background-color: #495057;
+}
+
+.sidebar.collapsed h4 {
+    font-size: 1rem;
+    padding-left: 0;
+    text-align: center;
+}
+
+.content {
+    margin-left: 220px;
+    padding: 2rem;
+    transition: margin-left 0.3s ease-in-out;
+    width: calc(100% - 220px);
+    box-sizing: border-box;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+.content.expanded {
+    margin-left: 60px;
+    width: calc(100% - 60px);
+}
+
+.sidebar a {
+    color: #adb5bd;
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar a:hover {
+    background-color: #495057;
+    color: white;
+}
+
+.sidebar a.active {
+    background-color: #0d6efd !important; 
+    color: white !important;
+    font-weight: 600;
+    border-radius: 4px;
+}
+
+.sidebar.collapsed a.active {
+    background-color: transparent !important; 
+    color: #0d6efd !important; 
+    font-weight: 700;
+    text-align: center;
+    box-shadow: inset 0 -3px 0 #0d6efd; 
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 56px;
+    }
+
+    .sidebar {
+        transform: translateX(-220px);
+        width: 220px;
+        position: fixed;
+        height: 100vh;
+        top: 56px;
+        padding-top: 1rem;
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .content {
+        margin-left: 0 !important;
+        padding: 1rem !important;
+        width: 100% !important;
+        overflow-x: visible;
+        padding-top: 56px;
+    }
+}
+
+html, body {
+    overflow-x: hidden;
+}
+
+#sidebarToggleDesktop {
+    font-size: 1.5rem;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    color: white;
+}
+
+#sidebarToggleDesktop:hover {
+    color: #0d6efd;
+}

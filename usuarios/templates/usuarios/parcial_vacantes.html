@@ -1,0 +1,48 @@
+{% for vacante in vacantes %}
+<div class="col-md-4 mb-4">
+  <div class="card shadow-sm border-0 h-100">
+    {% if vacante.destacada %}
+    <div class="card-header bg-warning text-dark fw-bold">
+      ⭐ Vacante destacada
+    </div>
+    {% endif %}
+    <div class="card-body">
+      <h5 class="card-title">{{ vacante.titulo }}</h5>
+      <p class="card-text">{{ vacante.descripcion_corta|truncatewords:25 }}</p>
+      <p><span class="badge bg-primary">{{ vacante.get_nivel_display }}</span></p>
+      <p><small class="text-muted">📍 {{ vacante.get_estado_mexico_display }}</small></p>
+
+      {% if user.is_authenticated %}
+        {% if not vacante.ya_aplico %}
+        <a href="#" class="btn btn-success"
+        onclick="aplicarVacante('{{ vacante.id }}','{{ vacante.titulo|escapejs }}')">
+          Aplicar
+        </a>
+        {% else %}
+          <button class="btn btn-secondary" disabled>Ya aplicaste</button>
+        {% endif %}
+      {% endif %}
+
+      <a href="#" class="btn btn-outline-secondary btn-sm"
+         onclick="verMasVacante(
+            '{{ vacante.id }}',
+            '{{ vacante.titulo|escapejs }}',
+            '{{ vacante.descripcion|escapejs }}',
+            '{{ vacante.estado_mexico }}',
+            '{{ vacante.get_estado_mexico_display|escapejs }}',
+            '{{ vacante.get_nivel_display|escapejs }}',
+            {{ vacante.ya_aplico|yesno:'true,false' }}
+         )">
+         Ver más
+      </a>
+    </div>
+    <div class="card-footer text-muted">
+      Publicada: {{ vacante.fecha_creacion|date:"d \d\e F \d\e Y H:i" }}
+    </div>
+  </div>
+</div>
+{% empty %}
+<div class="col-12">
+  <div class="alert alert-info">No hay vacantes disponibles en este momento.</div>
+</div>
+{% endfor %}

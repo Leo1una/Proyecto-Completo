@@ -1,0 +1,193 @@
+{% extends 'admin/base.html' %}{% block content %}
+<div class="container-fluid py-4">
+  <h2 class="mb-3">
+    Bienvenido {{ request.user.first_name }} {{ request.user.last_name }} al
+    Dashboard
+  </h2>
+  <p class="text-muted">Aquí podrás ver estadísticas y gestionar el sistema.</p>
+  <hr />
+  <div class="row">
+    <div class="col-12 col-lg-6 mb-4 d-flex">
+      <div class="card shadow-sm flex-fill">
+        <div class="card-body">
+          <h5 class="card-title">Citas de Hoy</h5>
+          {% if citas_hoy %}
+          <ul class="list-group list-group-flush">
+            {% for cita in citas_hoy %}
+            <li class="list-group-item">
+              <strong>{{ cita.titulo }}</strong>
+              <span class="text-muted ms-2">
+                ({{ cita.inicio|date:"H:i" }} - {{ cita.fin|date:"H:i" }}) </span
+              ><br />
+              <small><strong>Persona:</strong> {{ cita.persona }}</small><br />
+              <small>
+                <strong>Teléfono:</strong>
+                <a
+                  href="https://wa.me/{{ cita.telefono }}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {{ cita.telefono }}
+                </a> </small
+              ><br />
+              <small>
+                <strong>Email:</strong>
+                {% if cita.email %}
+                <a href="mailto:{{ cita.email }}">{{ cita.email }}</a>
+                {% else %} No especificado {% endif %} </small
+              ><br />
+              {% if cita.enlace %}
+              <a
+                href="{{ cita.enlace }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Enlace reunión</a
+              >
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="text-muted mb-0">No hay citas pendientes para hoy.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 mb-4 d-flex">
+      <div class="card shadow-sm flex-fill">
+        <div class="card-body">
+          <h5 class="card-title">Próxima Cita de Mañana</h5>
+          {% if cita_proxima_manana %}
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <strong>{{ cita_proxima_manana.titulo }}</strong>
+              <span class="text-muted ms-2">
+                ({{ cita_proxima_manana.inicio|date:"H:i" }} - {{
+                cita_proxima_manana.fin|date:"H:i" }}) </span
+              ><br />
+              <small
+                ><strong>Persona:</strong> {{ cita_proxima_manana.persona
+                }}</small
+              ><br />
+              <small>
+                <strong>Teléfono:</strong>
+                <a
+                  href="https://wa.me/{{ cita_proxima_manana.telefono }}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {{ cita_proxima_manana.telefono }}
+                </a> </small
+              ><br />
+              <small>
+                <strong>Email:</strong>
+                {% if cita_proxima_manana.email %}
+                <a href="mailto:{{ cita_proxima_manana.email }}"
+                  >{{ cita_proxima_manana.email }}</a
+                >
+                {% else %} No especificado {% endif %} </small
+              ><br />
+              {% if cita_proxima_manana.enlace %}
+              <a
+                href="{{ cita_proxima_manana.enlace }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Enlace reunión</a
+              >
+              {% else %}
+              <span class="text-muted">Enlace no disponible</span>
+              {% endif %}
+            </li>
+          </ul>
+          {% else %}
+          <p class="text-muted mb-0">No hay citas programadas para mañana.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row g-4 mb-4">
+    <div class="col-md-6 col-12">
+      <div class="card text-white bg-primary shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Usuarios activos</h5>
+          <p class="fs-2 mb-0">{{ total_usuarios }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-12">
+      <div class="card text-white bg-success shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Administradores</h5>
+          <p class="fs-2 mb-0">{{ total_admins }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row g-4">
+    <div class="col-md-6 col-12">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Vacantes Activas vs No Activas</h5>
+          <canvas id="vacantesChart" height="150"></canvas>
+        </div>
+      </div>
+    </div>
+<div class="col-md-6 col-12">
+  <div class="card shadow-sm h-100">
+    <div class="card-body">
+      <h5 class="card-title">Solicitudes Vistas vs No Vistas</h5>
+      <canvas id="solicitudesChart" height="150"></canvas>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    function crearGraficoPie(ctx, labels, data, colors, borderColors, label) {
+        return new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: label,
+                    data: data,
+                    backgroundColor: colors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    title: { display: false }
+                }
+            }
+        });
+    }
+
+    const ctxVacantes = document.getElementById('vacantesChart').getContext('2d');
+    crearGraficoPie(
+        ctxVacantes,
+        ['Activas', 'No Activas'],
+        [{{ vacantes_activas }}, {{ vacantes_no_activas }}],
+        ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+        ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+        'Vacantes'
+    );
+
+    const ctxSolicitudes = document.getElementById('solicitudesChart').getContext('2d');
+    crearGraficoPie(
+        ctxSolicitudes,
+        ['Vistas', 'No Vistas'],
+        [{{ solicitudes_vistas }}, {{ solicitudes_no_vistas }}],
+        ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+        ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+        'Solicitudes'
+    );
+});
+</script>
+{% endblock %}

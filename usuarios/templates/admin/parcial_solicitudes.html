@@ -1,0 +1,43 @@
+{% for app in aplicaciones %}
+<tr>
+    <td>{{ app.id }}</td>
+    <td>{{ app.nombre }}</td>
+    <td>{{ app.correo }}</td>
+    <td>{{ app.direccion }}</td>
+    <td>{{ app.telefono }}</td>
+    <td>{{ app.vacante.titulo }}</td>
+    <td class="text-center">
+        {% if app.imagen %}
+            <img src="{{ app.imagen.url }}" alt="Imagen" style="width:50px;height:50px;object-fit:cover;border-radius:5px;">
+        {% else %}
+            -
+        {% endif %}
+    </td>
+    <td class="text-center">
+        {% if app.curriculum %}
+            <a href="{{ app.curriculum.url }}" target="_blank">📄 Ver CV</a>
+        {% else %}
+            -
+        {% endif %}
+    </td>
+    <td class="text-center">
+        {% if app.vista %}
+            Vista
+        {% else %}
+            No vista
+        {% endif %}
+    </td>
+    <td class="text-center">
+        <button class="btn btn-sm btn-primary" onclick="marcarVista({{ app.id }})">
+            {% if app.vista %}Desmarcar{% else %}Marcar{% endif %}
+        </button>
+        <button class="btn btn-sm btn-danger" onclick="eliminarSolicitud({{ app.id }})">
+            Eliminar
+        </button>
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="10" class="text-center">No hay solicitudes registradas.</td>
+</tr>
+{% endfor %}

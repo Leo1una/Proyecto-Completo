@@ -1,0 +1,54 @@
+{% load static %}
+<h1>Editar Perfil</h1>
+<hr class="mb-4">
+<div class="card shadow-lg">
+    <div class="card-header text-center bg-primary text-white">
+        <h4 class="mb-0">Editar Perfil</h4>
+    </div>
+    <div class="card-body">
+        <form id="form-editar-perfil" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="text-center mb-3">
+                {% if user.imagen %}
+                    <img src="{{ user.imagen.url }}" alt="Imagen de perfil" class="rounded-circle" width="120" height="120" id="imagen-preview">
+                {% else %}
+                    <img src="{% static 'img/default-user.png' %}" alt="Sin imagen" class="rounded-circle" width="120" height="120" id="imagen-preview">
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label for="imagen" class="form-label">Cambiar imagen</label>
+                <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*" onchange="mostrarVistaPrevia(this)">
+            </div>
+            <div class="mb-3">
+                <label for="first_name" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}">
+            </div>
+            <div class="mb-3">
+                <label for="last_name" class="form-label">Apellido</label>
+                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo electrónico</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Nueva contraseña</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Dejar en blanco para no cambiar">
+            </div>
+            <div class="mb-3">
+                <label for="curriculum" class="form-label">Currículum (PDF)</label>
+                <div id="curriculum-link">
+                    {% if user.curriculum %}
+                        <p>
+                            <a href="{{ user.curriculum.url }}" target="_blank">📄 Ver currículum actual</a>
+                        </p>
+                    {% endif %}
+                </div>
+                <input type="file" class="form-control" id="curriculum" name="curriculum" accept="application/pdf">
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-success">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>

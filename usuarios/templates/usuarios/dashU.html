@@ -1,0 +1,224 @@
+{% extends 'usuarios/base.html' %}{% block content %} {% load static %}
+<div class="container-fluid py-4">
+  <h2 class="mb-3">
+    Bienvenido {{ request.user.first_name }} {{ request.user.last_name }} al
+    Dashboard
+  </h2>
+  <p class="text-muted">
+    Aquí podrás ver las vacantes a las que aplicaste, tus proximas citas.
+  </p>
+  <hr />
+  <div class="row">
+    <div class="col-12 col-lg-6 mb-4 d-flex">
+      <div class="card shadow-sm flex-fill">
+        <div class="card-body">
+          <h5 class="card-title">Citas de Hoy</h5>
+          {% if citas_hoy %}
+          <ul class="list-group list-group-flush">
+            {% for cita in citas_hoy %}
+            <li class="list-group-item">
+              <strong>{{ cita.titulo }}</strong>
+              <span class="text-muted ms-2">
+                ({{ cita.inicio|date:"H:i" }} - {{ cita.fin|date:"H:i" }}) </span
+              ><br />
+              <small><strong>Persona:</strong> {{ cita.persona }}</small><br />
+              <small>
+                <strong>Teléfono:</strong>
+                <a
+                  href="https://wa.me/{{ cita.telefono }}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {{ cita.telefono }}
+                </a> </small
+              ><br />
+              <small>
+                <strong>Email:</strong>
+                {% if cita.email %}
+                <a href="mailto:{{ cita.email }}">{{ cita.email }}</a>
+                {% else %} No especificado {% endif %} </small
+              ><br />
+              {% if cita.enlace %}
+              <a
+                href="{{ cita.enlace }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Enlace reunión</a
+              >
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="text-muted mb-0">No hay citas pendientes para hoy.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6 mb-4 d-flex">
+      <div class="card shadow-sm flex-fill">
+        <div class="card-body">
+          <h5 class="card-title">Próxima Cita de Mañana</h5>
+          {% if cita_proxima_manana %}
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <strong>{{ cita_proxima_manana.titulo }}</strong>
+              <span class="text-muted ms-2">
+                ({{ cita_proxima_manana.inicio|date:"H:i" }} - {{
+                cita_proxima_manana.fin|date:"H:i" }}) </span
+              ><br />
+              <small
+                ><strong>Persona:</strong> {{ cita_proxima_manana.persona
+                }}</small
+              ><br />
+              <small>
+                <strong>Teléfono:</strong>
+                <a
+                  href="https://wa.me/{{ cita_proxima_manana.telefono }}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {{ cita_proxima_manana.telefono }}
+                </a> </small
+              ><br />
+              <small>
+                <strong>Email:</strong>
+                {% if cita_proxima_manana.email %}
+                <a href="mailto:{{ cita_proxima_manana.email }}"
+                  >{{ cita_proxima_manana.email }}</a
+                >
+                {% else %} No especificado {% endif %} </small
+              ><br />
+              {% if cita_proxima_manana.enlace %}
+              <a
+                href="{{ cita_proxima_manana.enlace }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Enlace reunión</a
+              >
+              {% else %}
+              <span class="text-muted">Enlace no disponible</span>
+              {% endif %}
+            </li>
+          </ul>
+          {% else %}
+          <p class="text-muted mb-0">No hay citas programadas para mañana.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr />
+<div class="row">
+  <div class="col-12">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Aplicaciones No Vistas por el reclutador</h5>
+        {% if aplicaciones_no_vistas %}
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Vacante</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Dirección</th>
+                <th>Curriculum</th>
+                <th>Imagen</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for app in aplicaciones_no_vistas %}
+              <tr data-id="{{ app.id }}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ app.vacante.titulo }}</td>
+                <td class="nombre">{{ app.nombre }}</td>
+                <td class="correo">{{ app.correo }}</td>
+                <td class="telefono">{{ app.telefono }}</td>
+                <td class="direccion">{{ app.direccion }}</td>
+                <td>
+                  {% if app.curriculum %}
+                  <a href="{{ app.curriculum.url }}" target="_blank">Ver CV</a>
+                  {% else %} No disponible {% endif %}
+                </td>
+                <td>
+                  {% if app.imagen %}
+                  <img src="{{ app.imagen.url }}" alt="Imagen" width="50" />
+                  {% else %} No disponible {% endif %}
+                </td>
+                <td>
+                  <button class="btn btn-warning btn-sm btn-editar">
+                    Editar
+                  </button>
+                  <button class="btn btn-danger btn-sm btn-eliminar">
+                    Cancelar
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p class="text-muted mb-0">No hay aplicaciones pendientes de ver.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<hr />
+<div class="col-md-8 col-12">
+  <div class="card shadow-sm h-50">
+    <div class="card-body">
+      <h5 class="card-title">Solicitudes Vistas vs No Vistas</h5>
+      <canvas id="solicitudesChart" height="150"></canvas>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      const ctx = document.getElementById('solicitudesChart').getContext('2d');
+
+      new Chart(ctx, {
+          type: 'pie',
+          data: {
+              labels: ['Vistas', 'No Vistas'],
+              datasets: [{
+                  label: 'Solicitudes',
+                  data: [
+                      {{ solicitudes_vistas }},
+                      {{ solicitudes_no_vistas }}
+                  ],
+  backgroundColor: [
+      'rgba(75, 192, 192, 0.6)',  
+      'rgba(255, 99, 132, 0.6)'   
+  ],
+  borderColor: [
+      'rgba(75, 192, 192, 1)',    
+      'rgba(255, 99, 132, 1)'     
+  ],
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  legend: {
+                      position: 'bottom'
+                  },
+                  title: {
+                      display: false
+                  }
+              }
+          }
+      });
+  });
+</script>
+  {% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{% static 'js/dashU.js' %}"></script>

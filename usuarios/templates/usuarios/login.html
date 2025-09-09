@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bienvenido a Jsoft</title>
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+  <div class="container">
+    <h2 id="form-title">Iniciar sesión</h2>
+    <form id="login-form" class="active" method="POST" action="{% url 'login' %}">
+      {% csrf_token %}
+      <input type="email" name="correo" placeholder="Correo electrónico" required>
+      <input type="password" name="password" placeholder="Contraseña" required>
+<div class="extra-links">
+  <a href="{% url 'password_reset_custom' %}">¿Olvidaste tu contraseña?</a>
+</div>
+      <button type="submit">Ingresar</button>
+      <div class="toggle">¿No tienes cuenta? <a onclick="toggleForms()">Regístrate</a></div>
+  </form>  
+    <form id="register-form" method="POST" action="{% url 'registro' %}">
+      {% csrf_token %}
+      <input type="text" name="nombre" placeholder="Nombre(s)" required>
+      <input type="text" name="apellidos" placeholder="Apellidos" required>
+      <input type="text" name="username" placeholder="Nombre de usuario" required>
+      <input type="email" name="email" placeholder="Correo electrónico" required>
+      <input type="password" name="password1" placeholder="Contraseña" required>
+      <input type="password" name="password2" placeholder="Confirmar contraseña" required>
+      <button type="submit">Registrarse</button>
+      <div class="toggle">¿Ya tienes cuenta? <a onclick="toggleForms()">Inicia sesión</a></div>
+    </form>
+    
+  </div>
+  <script>
+    function toggleForms() {
+      const loginForm = document.getElementById('login-form');
+      const registerForm = document.getElementById('register-form');
+      const formTitle = document.getElementById('form-title');
+
+      loginForm.classList.toggle('active');
+      registerForm.classList.toggle('active');
+
+      if (loginForm.classList.contains('active')) {
+        formTitle.textContent = "Iniciar sesión";
+      } else {
+        formTitle.textContent = "Registrarse";
+      }
+    }
+  </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% if messages %}
+<script>
+  {% for message in messages %}
+    Swal.fire({
+      title: `{% if message.tags == 'error' %}¡Error!{% elif message.tags == 'success' %}¡Éxito!{% else %}Aviso{% endif %}`,
+      text: '{{ message|escapejs }}',
+      icon: '{% if message.tags == "error" %}error{% elif message.tags == "success" %}success{% else %}info{% endif %}',
+      confirmButtonText: 'OK'
+    });
+  {% endfor %}
+</script>
+{% endif %}
+</body>
+</html>

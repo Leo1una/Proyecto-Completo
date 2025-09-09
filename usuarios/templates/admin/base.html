@@ -1,0 +1,155 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Dashboard - JsoftGroup{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'css/dash.css' %}" />
+  </head>
+  <body>
+    <form style="display: none">{% csrf_token %}</form>
+    <nav class="navbar navbar-dark bg-dark d-md-none fixed-top">
+      <div class="container-fluid">
+        <button
+          class="navbar-toggler"
+          type="button"
+          id="sidebarToggleMobile"
+          aria-label="Toggle navigation"
+          aria-expanded="false"
+          aria-controls="sidebarMenu"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <h4 class="navbar-brand mb-0 h1 text-center m-0 flex-grow-1">
+          <span style="color: blue">Jsoft</span
+          ><span style="color: red">Group</span>
+        </h4>
+        <a
+          href="{% url 'logout' %}"
+          onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+          class="nav-link text-danger fw-bold"
+        >
+          Cerrar sesión
+        </a>
+      </div>
+    </nav>
+    <nav
+      id="sidebarMenu"
+      class="sidebar bg-dark text-white d-flex flex-column p-3"
+    >
+      <div class="d-flex align-items-center mb-4">
+        <button
+          class="btn btn-outline-light me-2 d-none d-md-inline"
+          id="sidebarToggleDesktop"
+          aria-label="Toggle sidebar"
+          aria-expanded="true"
+          aria-controls="sidebarMenu"
+        >
+          &#9776;
+        </button>
+        <h4 class="m-0 d-flex align-items-center">
+          <span style="color: blue">Jsoft</span
+          ><span style="color: red">Group</span>
+        </h4>
+      </div>
+      <div class="flex-grow-1">
+        <a
+          href="{% url 'dashboard' %}"
+          class="nav-link {% if opcion_activa == 'dashboard' %}active{% endif %}"
+          >Dashboard</a
+        >
+        <a
+          href="#"
+          class="nav-link btnAdministradores"
+          onclick="event.preventDefault(); mostrarAdministradores(); activarMenu(this);"
+          >Administradores</a
+        >
+        <a
+          href="#"
+          class="nav-link btnUsuarios"
+          onclick="event.preventDefault(); mostrarUsuarios(); activarMenu(this);"
+          >Usuarios</a
+        >
+        <a
+          href="#"
+          class="nav-link btnSolicitudes"
+          onclick="event.preventDefault(); mostrarSolicitudes(); activarMenu(this);"
+          >Solicitudes</a
+        >
+        <a
+          href="#"
+          class="nav-link btnConvocatorias"
+          onclick="event.preventDefault(); mostrarConvocatorias(); activarMenu(this);"
+          >Vacantes</a
+        >
+        <a
+          href="#"
+          class="nav-link btnCalendario"
+          onclick="event.preventDefault(); mostrarCalendario(); activarMenu(this);"
+          >Calendario</a
+        >
+        <a
+          href="#"
+          class="nav-link btnPerfil"
+          onclick="event.preventDefault(); mostrarPerfil(); activarMenu(this);"
+          >Perfil</a
+        >
+      </div>
+      <div>
+        <a
+          href="{% url 'logout' %}"
+          onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+          class="nav-link text-danger fw-bold"
+        >
+          Cerrar sesión
+        </a>
+        <form
+          id="logout-form"
+          action="{% url 'logout' %}"
+          method="POST"
+          class="d-none"
+        >
+          {% csrf_token %}
+        </form>
+      </div>
+    </nav>
+    <main id="contentArea" class="content">
+      <div class="container-fluid pt-5 mt-3">
+        <div id="contenido-dinamico">{% block content %} {% endblock %}</div>
+      </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.min.js"></script>
+    <script src="{% static 'js/dash.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      const usuarioActualEsSuperuser = {{ request.user.is_superuser|yesno:"true,false" }};
+    </script>
+    <script>
+      const USER_ES_SUPERUSER = {{ request.user.is_superuser|yesno:"true,false" }};
+      const USER_ES_ADMIN = {{ request.user.is_staff|yesno:"true,false" }};
+    </script>
+    {% if messages %}
+    <script>
+      Swal.fire({
+        icon: "success",
+        title: "¡Éxito!",
+        text: "{{ messages.0 }}",
+        confirmButtonColor: "#3085d6",
+      });
+    </script>
+    {% endif %}
+  </body>
+</html>
